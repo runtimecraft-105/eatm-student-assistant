@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+    <title>EATM Student Assistant</title>
+
+```
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        overflow: hidden;
+        font-family:
+            Inter,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            Arial,
+            sans-serif;
+        background: #070b14;
+        color: #f8fafc;
+    }
+
+    body {
+        min-height: 100dvh;
+    }
+
+    button,
+    textarea {
+        font: inherit;
+    }
+
+    button {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+        width: 100%;
+        height: 100dvh;
+        min-height: 100dvh;
+        display: flex;
+        overflow: hidden;
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(59, 130, 246, 0.08),
+                transparent 35%
+            ),
+            #070b14;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar {
+        width: 270px;
+        height: 100%;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 22px 16px;
+        border-right: 1px solid rgba(255, 255, 255, 0.07);
+        background: rgba(10, 15, 27, 0.92);
+        backdrop-filter: blur(20px);
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 8px 22px;
+    }
+
+    .brand-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: linear-gradient(
+            135deg,
+            #2563eb,
+            #7c3aed
+        );
+        box-shadow:
+            0 8px 25px rgba(37, 99, 235, 0.25);
+        font-size: 21px;
+    }
+
+    .brand-text h1 {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+    }
+
+    .brand-text p {
+        margin-top: 3px;
+        color: #7f8ba3;
+        font-size: 11px;
+    }
+
+    .new-chat {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 11px 13px;
+        background: rgba(255, 255, 255, 0.04);
+        color: #e2e8f0;
+        cursor: pointer;
+        text-align: left;
+        transition: 0.2s ease;
+    }
+
+    .new-chat:hover {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(96, 165, 250, 0.25);
+    }
+
+    .sidebar-section {
+        margin-top: 30px;
+    }
+
+    .sidebar-title {
+        margin: 0 8px 12px;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .capability {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 8px;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    .capability-icon {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.045);
+        font-size: 14px;
+    }
+
+    .sidebar-footer {
+        margin-top: auto;
+        padding: 10px 8px;
+        color: #475569;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    .main {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .topbar {
+        height: 64px;
+        min-height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(7, 11, 20, 0.7);
+        backdrop-filter: blur(18px);
+        z-index: 20;
+    }
+
+    .topbar-title {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #22c55e;
+        box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
+    }
+
+    /* =========================
+       CHAT
+    ========================= */
+
+    .chat-container {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 30px 20px 170px;
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .chat-content {
+        width: 100%;
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .welcome {
+        min-height: calc(100% - 10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 10px;
+    }
+
+    .welcome-inner {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+    }
+
+    .welcome-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 22px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(37, 99, 235, 0.22),
+                rgba(124, 58, 237, 0.22)
+            );
+        border: 1px solid rgba(96, 165, 250, 0.15);
+        font-size: 32px;
+        box-shadow:
+            0 15px 45px rgba(37, 99, 235, 0.1);
+    }
+
+    .welcome h2 {
+        font-size: clamp(25px, 4vw, 38px);
+        line-height: 1.15;
+        letter-spacing: -1px;
+        margin-bottom: 12px;
+    }
+
+    .welcome p {
+        max-width: 570px;
+        margin: 0 auto;
+        color: #8491a7;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .suggestions {
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .suggestion {
+        padding: 14px;
+        text-align: left;
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(255, 255, 255, 0.065);
+        border-radius: 14px;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .suggestion:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(96, 165, 250, 0.2);
+    }
+
+    .suggestion-title {
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .suggestion-text {
+        margin-top: 5px;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    /* =========================
+       MESSAGES
+    ========================= */
+
+    .message {
+        display: flex;
+        gap: 12px;
+        margin: 0 auto 22px;
+        max-width: 850px;
+        animation: messageIn 0.25s ease;
+    }
+
+    @keyframes messageIn {
+        from {
+            opacity: 0;
+            transform: translateY(7px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .message.user {
+        justify-content: flex-end;
+    }
+
+    .avatar {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.06);
+        font-size: 14px;
+    }
+
+    .message.user .avatar {
+        order: 2;
+        background: rgba(37, 99, 235, 0.18);
+    }
+
+    .message-body {
+        max-width: min(720px, 85%);
+    }
+
+    .message.user .message-body {
+        max-width: min(680px, 82%);
+    }
+
+    .message-content {
+        padding: 13px 15px;
+        border-radius: 15px;
+        color: #dbe4f0;
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(255, 255, 255, 0.055);
+        font-size: 13px;
+        line-height: 1.65;
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .message.user .message-content {
+        background: linear-gradient(
+            135deg,
+            rgba(37, 99, 235, 0.85),
+            rgba(79, 70, 229, 0.85)
+        );
+        border-color: transparent;
+        color: white;
+    }
+
+    .assistant-heading {
+        margin: 3px 0 9px;
+        color: #f8fafc;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .bullet-item {
+        position: relative;
+        padding-left: 18px;
+        margin: 5px 0;
+    }
+
+    .bullet-item::before {
+        content: "•";
+        position: absolute;
+        left: 2px;
+        color: #60a5fa;
+        font-weight: 700;
+    }
+
+    .inline-bold {
+        color: #f8fafc;
+        font-weight: 700;
+    }
+
+    .typing {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 22px;
+    }
+
+    .typing span {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #64748b;
+        animation: typing 1.2s infinite ease-in-out;
+    }
+
+    .typing span:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .typing span:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    @keyframes typing {
+        0%,
+        60%,
+        100% {
+            transform: translateY(0);
+            opacity: 0.45;
+        }
+
+        30% {
+            transform: translateY(-4px);
+            opacity: 1;
+        }
+    }
+
+    /* =========================
+       INPUT
+    ========================= */
+
+    .input-area {
+        position: fixed;
+        left: 270px;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+
+        padding:
+            12px 20px
+            max(14px, env(safe-area-inset-bottom))
+            20px;
+
+        background: linear-gradient(
+            to top,
+            rgba(7, 11, 20, 0.98) 60%,
+            rgba(7, 11, 20, 0)
+        );
+
+        pointer-events: none;
+    }
+
+    .input-wrapper {
+        width: 100%;
+        max-width: 850px;
+        margin: 0 auto;
+        display: flex;
+        align-items: flex-end;
+        gap: 9px;
+        padding: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 17px;
+        background: rgba(16, 23, 38, 0.97);
+        box-shadow:
+            0 12px 40px rgba(0, 0, 0, 0.35);
+        pointer-events: auto;
+    }
+
+    #messageInput {
+        flex: 1;
+        min-width: 0;
+        max-height: 130px;
+        resize: none;
+        border: none;
+        outline: none;
+        padding: 10px 10px;
+        background: transparent;
+        color: #f8fafc;
+        font-size: 14px;
+        line-height: 1.5;
+        overflow-y: auto;
+    }
+
+    #messageInput::placeholder {
+        color: #64748b;
+    }
+
+    #sendButton {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
+        color: white;
+        cursor: pointer;
+        font-size: 17px;
+        transition: 0.2s ease;
+    }
+
+    #sendButton:hover {
+        transform: translateY(-1px);
+        box-shadow:
+            0 7px 20px rgba(37, 99, 235, 0.25);
+    }
+
+    #sendButton:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .input-hint {
+        max-width: 850px;
+        margin: 7px auto 0;
+        padding: 0 5px;
+        color: #475569;
+        font-size: 9px;
+        text-align: right;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 760px) {
+        .sidebar {
+            display: none;
+        }
+
+        .topbar {
+            height: 56px;
+            min-height: 56px;
+            padding: 0 15px;
+        }
+
+        .topbar-title {
+            font-size: 13px;
+        }
+
+        .chat-container {
+            padding:
+                20px 12px
+                155px;
+        }
+
+        .welcome {
+            min-height: calc(100% - 10px);
+            padding: 20px 5px;
+        }
+
+        .welcome-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 17px;
+            border-radius: 19px;
+            font-size: 27px;
+        }
+
+        .welcome h2 {
+            font-size: 27px;
+            letter-spacing: -0.7px;
+        }
+
+        .welcome p {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .suggestions {
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-top: 21px;
+        }
+
+        .suggestion {
+            padding: 12px;
+        }
+
+        .message {
+            gap: 8px;
+            margin-bottom: 17px;
+        }
+
+        .avatar {
+            width: 29px;
+            height: 29px;
+            min-width: 29px;
+            border-radius: 9px;
+            font-size: 12px;
+        }
+
+        .message-body,
+        .message.user .message-body {
+            max-width: calc(100% - 38px);
+        }
+
+        .message-content {
+            padding: 11px 12px;
+            border-radius: 13px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .input-area {
+            left: 0;
+            right: 0;
+            padding:
+                8px
+                10px
+                max(8px, env(safe-area-inset-bottom))
+                10px;
+
+            background: linear-gradient(
+                to top,
+                rgba(7, 11, 20, 0.99) 65%,
+                rgba(7, 11, 20, 0)
+            );
+        }
+
+        .input-wrapper {
+            padding: 6px;
+            border-radius: 15px;
+            gap: 6px;
+        }
+
+        #messageInput {
+            padding: 9px 8px;
+            font-size: 14px;
+            max-height: 110px;
+        }
+
+        #sendButton {
+            width: 39px;
+            height: 39px;
+            min-width: 39px;
+            border-radius: 11px;
+        }
+
+        .input-hint {
+            display: none;
+        }
+    }
+
+    @media (max-width: 390px) {
+        .welcome h2 {
+            font-size: 24px;
+        }
+
+        .welcome p {
+            font-size: 11px;
+        }
+
+        .message-content {
+            font-size: 12px;
+        }
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="app">
+
+```
+<aside class="sidebar">
+
+    <div class="brand">
+        <div class="brand-icon">🎓</div>
+
+        <div class="brand-text">
+            <h1>EATM Assistant</h1>
+            <p>Student AI Assistant</p>
+        </div>
+    </div>
+
+    <button
+        type="button"
+        class="new-chat"
+        id="newChatButton"
+    >
+        ＋ New conversation
+    </button>
+
+    <div class="sidebar-section">
+
+        <div class="sidebar-title">
+            Capabilities
+        </div>
+
+        <div class="capability">
+            <div class="capability-icon">🏫</div>
+            <span>EATM information</span>
+        </div>
+
+        <div class="capability">
+            <div class="capability-icon">📚</div>
+            <span>Academic questions</span>
+        </div>
+
+        <div class="capability">
+            <div class="capability-icon">🏠</div>
+            <span>Hostel information</span>
+        </div>
+
+        <div class="capability">
+            <div class="capability-icon">💼</div>
+            <span>Placement information</span>
+        </div>
+
+    </div>
+
+    <div class="sidebar-footer">
+        AI-powered student assistant prototype
+        <br>
+        Built for demonstration purposes
+    </div>
+
+</aside>
+
+<main class="main">
+
+    <header class="topbar">
+
+        <div class="topbar-title">
+            Student Assistant
+        </div>
+
+        <div class="status">
+            <span class="status-dot"></span>
+            Online
+        </div>
+
+    </header>
+
+    <section
+        class="chat-container"
+        id="chatContainer"
+    >
+
+        <div
+            class="chat-content"
+            id="chatContent"
+        >
+
+            <div
+                class="welcome"
+                id="welcomeScreen"
+            >
+
+                <div class="welcome-inner">
+
+                    <div class="welcome-icon">
+                        🤖
+                    </div>
+
+                    <h2>
+                        How can I help you today?
+                    </h2>
+
+                    <p>
+                        Ask questions about EATM or
+                        get help with general academic
+                        concepts.
+                    </p>
+
+                    <div class="suggestions">
+
+                        <button
+                            type="button"
+                            class="suggestion"
+                            data-question="What facilities are available at EATM?"
+                        >
+                            <div class="suggestion-title">
+                                🏢 College facilities
+                            </div>
+
+                            <div class="suggestion-text">
+                                Explore available campus facilities.
+                            </div>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="suggestion"
+                            data-question="What departments are available at EATM?"
+                        >
+                            <div class="suggestion-title">
+                                🎓 Departments
+                            </div>
+
+                            <div class="suggestion-text">
+                                Learn about academic departments.
+                            </div>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="suggestion"
+                            data-question="Tell me about hostel facilities at EATM."
+                        >
+                            <div class="suggestion-title">
+                                🏠 Hostel
+                            </div>
+
+                            <div class="suggestion-text">
+                                Ask about hostel-related information.
+                            </div>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="suggestion"
+                            data-question="What is polymorphism in Java?"
+                        >
+                            <div class="suggestion-title">
+                                💡 Academic help
+                            </div>
+
+                            <div class="suggestion-text">
+                                Get help understanding technical concepts.
+                            </div>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <div
+        class="input-area"
+        id="inputArea"
+    >
+
+        <div class="input-wrapper">
+
+            <textarea
+                id="messageInput"
+                rows="1"
+                maxlength="4000"
+                placeholder="Ask something..."
+                autocomplete="off"
+                spellcheck="true"
+            ></textarea>
+
+            <button
+                type="button"
+                id="sendButton"
+                aria-label="Send message"
+            >
+                ➤
+            </button>
+
+        </div>
+
+        <div class="input-hint">
+            Enter to send · Shift + Enter for new line
+        </div>
+
+    </div>
+
+</main>
+```
+
+</div>
+
+<script>
+    const chatContainer =
+        document.getElementById("chatContainer");
+
+    const chatContent =
+        document.getElementById("chatContent");
+
+    const messageInput =
+        document.getElementById("messageInput");
+
+    const sendButton =
+        document.getElementById("sendButton");
+
+    const newChatButton =
+        document.getElementById("newChatButton");
+
+    const welcomeScreen =
+        document.getElementById("welcomeScreen");
+
+    const inputArea =
+        document.getElementById("inputArea");
+
+
+    /* =========================
+       SESSION
+    ========================= */
+
+    function createSessionId() {
+
+        if (
+            window.crypto &&
+            typeof window.crypto.randomUUID === "function"
+        ) {
+            return window.crypto.randomUUID();
+        }
+
+        return (
+            "session-" +
+            Date.now() +
+            "-" +
+            Math.random()
+                .toString(36)
+                .substring(2)
+        );
+    }
+
+
+    let sessionId =
+        createSessionId();
+
+
+    /* =========================
+       MESSAGE FORMATTING
+    ========================= */
+
+    function escapeHtml(text) {
+
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    function formatAssistantMessage(text) {
+
+        const lines =
+            String(text).split("\n");
+
+        let html = "";
+
+        for (let line of lines) {
+
+            line = line.trim();
+
+            if (!line) {
+                html += "<div style='height:7px'></div>";
+                continue;
+            }
+
+            if (
+                line.startsWith("### ")
+            ) {
+                const heading =
+                    escapeHtml(
+                        line.substring(4)
+                    );
+
+                html +=
+                    `<div class="assistant-heading">${heading}</div>`;
+
+                continue;
+            }
+
+            if (
+                line.startsWith("## ")
+            ) {
+                const heading =
+                    escapeHtml(
+                        line.substring(3)
+                    );
+
+                html +=
+                    `<div class="assistant-heading">${heading}</div>`;
+
+                continue;
+            }
+
+            if (
+                line.startsWith("**") &&
+                line.endsWith("**") &&
+                line.length > 4
+            ) {
+                const heading =
+                    escapeHtml(
+                        line.substring(
+                            2,
+                            line.length - 2
+                        )
+                    );
+
+                html +=
+                    `<div class="assistant-heading">${heading}</div>`;
+
+                continue;
+            }
+
+            if (
+                line.startsWith("* ") ||
+                line.startsWith("- ") ||
+                line.startsWith("• ")
+            ) {
+
+                let bullet =
+                    line.substring(2);
+
+                bullet =
+                    escapeHtml(bullet);
+
+                bullet =
+                    bullet.replace(
+                        /\*\*(.*?)\*\*/g,
+                        '<span class="inline-bold">$1</span>'
+                    );
+
+                html +=
+                    `<div class="bullet-item">${bullet}</div>`;
+
+                continue;
+            }
+
+            let formatted =
+                escapeHtml(line);
+
+            formatted =
+                formatted.replace(
+                    /\*\*(.*?)\*\*/g,
+                    '<span class="inline-bold">$1</span>'
+                );
+
+            html +=
+                `<div>${formatted}</div>`;
+        }
+
+        return html;
+    }
+
+
+    /* =========================
+       ADD MESSAGE
+    ========================= */
+
+    function addMessage(
+        role,
+        content
+    ) {
+
+        if (welcomeScreen) {
+            welcomeScreen.style.display = "none";
+        }
+
+        const message =
+            document.createElement("div");
+
+        message.className =
+            `message ${role}`;
+
+        const avatar =
+            document.createElement("div");
+
+        avatar.className =
+            "avatar";
+
+        avatar.textContent =
+            role === "user"
+                ? "👤"
+                : "🤖";
+
+        const body =
+            document.createElement("div");
+
+        body.className =
+            "message-body";
+
+        const messageContent =
+            document.createElement("div");
+
+        messageContent.className =
+            "message-content";
+
+        if (role === "assistant") {
+
+            messageContent.innerHTML =
+                formatAssistantMessage(content);
+
+        } else {
+
+            messageContent.textContent =
+                content;
+        }
+
+        body.appendChild(
+            messageContent
+        );
+
+        message.appendChild(
+            avatar
+        );
+
+        message.appendChild(
+            body
+        );
+
+        chatContent.appendChild(
+            message
+        );
+
+        scrollToBottom();
+
+        return message;
+    }
+
+
+    /* =========================
+       TYPING INDICATOR
+    ========================= */
+
+    function addTypingIndicator() {
+
+        if (welcomeScreen) {
+            welcomeScreen.style.display = "none";
+        }
+
+        const message =
+            document.createElement("div");
+
+        message.className =
+            "message assistant";
+
+        message.id =
+            "typingMessage";
+
+        const avatar =
+            document.createElement("div");
+
+        avatar.className =
+            "avatar";
+
+        avatar.textContent =
+            "🤖";
+
+        const body =
+            document.createElement("div");
+
+        body.className =
+            "message-body";
+
+        const content =
+            document.createElement("div");
+
+        content.className =
+            "message-content";
+
+        content.innerHTML = `
+            <div class="typing">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        `;
+
+        body.appendChild(content);
+
+        message.appendChild(avatar);
+
+        message.appendChild(body);
+
+        chatContent.appendChild(message);
+
+        scrollToBottom();
+
+        return message;
+    }
+
+
+    /* =========================
+       SCROLL
+    ========================= */
+
+    function scrollToBottom() {
+
+        requestAnimationFrame(() => {
+
+            chatContainer.scrollTop =
+                chatContainer.scrollHeight;
+
+        });
+    }
+
+
+    /* =========================
+       SEND MESSAGE
+    ========================= */
+
+    async function sendMessage(
+        customMessage = ""
+    ) {
+
+        const message =
+            String(
+                customMessage ||
+                messageInput.value ||
+                ""
+            ).trim();
+
+        if (!message) {
+            return;
+        }
+
+        if (sendButton.disabled) {
+            return;
+        }
+
+        messageInput.value = "";
+
+        messageInput.style.height =
+            "auto";
+
+        addMessage(
+            "user",
+            message
+        );
+
+        const typing =
+            addTypingIndicator();
+
+        sendButton.disabled = true;
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/chat",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            message: message,
+                            session_id: sessionId
+                        })
+                    }
+                );
+
+            let data = null;
+
+            try {
+                data =
+                    await response.json();
+            } catch {
+                data = null;
+            }
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data?.error ||
+                    `Server error: ${response.status}`
+                );
+            }
+
+            if (typing) {
+                typing.remove();
+            }
+
+            addMessage(
+                "assistant",
+                data.answer ||
+                "I couldn't generate a response."
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Chat request failed:",
+                error
+            );
+
+            if (typing) {
+                typing.remove();
+            }
+
+            addMessage(
+                "assistant",
+                "Sorry, I couldn't connect to the assistant right now. Please try again."
+            );
+
+        } finally {
+
+            sendButton.disabled =
+                false;
+
+            messageInput.focus();
+
+            setTimeout(
+                scrollToBottom,
+                100
+            );
+        }
+    }
+
+
+    /* =========================
+       INPUT EVENTS
+    ========================= */
+
+    sendButton.addEventListener(
+        "click",
+        () => sendMessage()
+    );
+
+
+    messageInput.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                sendMessage();
+            }
+        }
+    );
+
+
+    messageInput.addEventListener(
+        "input",
+        () => {
+
+            messageInput.style.height =
+                "auto";
+
+            messageInput.style.height =
+                Math.min(
+                    messageInput.scrollHeight,
+                    130
+                ) + "px";
+        }
+    );
+
+
+    /* =========================
+       NEW CHAT
+    ========================= */
+
+    newChatButton.addEventListener(
+        "click",
+        () => {
+
+            sessionId =
+                createSessionId();
+
+            chatContent.innerHTML = `
+                <div
+                    class="welcome"
+                    id="welcomeScreen"
+                >
+                    <div class="welcome-inner">
+
+                        <div class="welcome-icon">
+                            🤖
+                        </div>
+
+                        <h2>
+                            How can I help you today?
+                        </h2>
+
+                        <p>
+                            Ask questions about EATM or
+                            get help with general academic
+                            concepts.
+                        </p>
+
+                        <div class="suggestions">
+
+                            <button
+                                type="button"
+                                class="suggestion"
+                                data-question="What facilities are available at EATM?"
+                            >
+                                <div class="suggestion-title">
+                                    🏢 College facilities
+                                </div>
+
+                                <div class="suggestion-text">
+                                    Explore available campus facilities.
+                                </div>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="suggestion"
+                                data-question="What departments are available at EATM?"
+                            >
+                                <div class="suggestion-title">
+                                    🎓 Departments
+                                </div>
+
+                                <div class="suggestion-text">
+                                    Learn about academic departments.
+                                </div>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="suggestion"
+                                data-question="Tell me about hostel facilities at EATM."
+                            >
+                                <div class="suggestion-title">
+                                    🏠 Hostel
+                                </div>
+
+                                <div class="suggestion-text">
+                                    Ask about hostel-related information.
+                                </div>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="suggestion"
+                                data-question="What is polymorphism in Java?"
+                            >
+                                <div class="suggestion-title">
+                                    💡 Academic help
+                                </div>
+
+                                <div class="suggestion-text">
+                                    Get help understanding technical concepts.
+                                </div>
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            `;
+
+            attachSuggestionEvents();
+
+            messageInput.value = "";
+
+            messageInput.style.height =
+                "auto";
+
+            messageInput.focus();
+
+            scrollToBottom();
+        }
+    );
+
+
+    /* =========================
+       SUGGESTIONS
+    ========================= */
+
+    function attachSuggestionEvents() {
+
+        const suggestions =
+            document.querySelectorAll(
+                ".suggestion"
+            );
+
+        suggestions.forEach(
+            suggestion => {
+
+                suggestion.addEventListener(
+                    "click",
+                    () => {
+
+                        const question =
+                            suggestion.dataset.question;
+
+                        sendMessage(
+                            question
+                        );
+                    }
+                );
+
+            }
+        );
+    }
+
+
+    attachSuggestionEvents();
+
+
+    /* =========================
+       MOBILE KEYBOARD HANDLING
+    ========================= */
+
+    function updateKeyboardLayout() {
+
+        if (!window.visualViewport) {
+            return;
+        }
+
+        const viewport =
+            window.visualViewport;
+
+        const keyboardHeight =
+            Math.max(
+                0,
+                window.innerHeight -
+                viewport.height -
+                viewport.offsetTop
+            );
+
+        if (
+            window.innerWidth <= 760 &&
+            keyboardHeight > 80
+        ) {
+
+            inputArea.style.bottom =
+                keyboardHeight + "px";
+
+            chatContainer.style.paddingBottom =
+                (
+                    keyboardHeight +
+                    125
+                ) + "px";
+
+        } else {
+
+            inputArea.style.bottom =
+                "0px";
+
+            chatContainer.style.paddingBottom =
+                "155px";
+        }
+
+        setTimeout(
+            () => {
+
+                if (
+                    document.activeElement ===
+                    messageInput
+                ) {
+                    scrollToBottom();
+                }
+
+            },
+            50
+        );
+    }
+
+
+    if (window.visualViewport) {
+
+        window.visualViewport.addEventListener(
+            "resize",
+            updateKeyboardLayout
+        );
+
+        window.visualViewport.addEventListener(
+            "scroll",
+            updateKeyboardLayout
+        );
+    }
+
+
+    window.addEventListener(
+        "resize",
+        updateKeyboardLayout
+    );
+
+
+    window.addEventListener(
+        "orientationchange",
+        () => {
+
+            setTimeout(
+                updateKeyboardLayout,
+                250
+            );
+
+        }
+    );
+
+
+    updateKeyboardLayout();
+
+</script>
+
+</body>
+</html>

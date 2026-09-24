@@ -1,0 +1,30 @@
+# Environment variables and secrets
+.env
+.env.*
+
+# Keep the example environment file
+!.env.example
+
+# Python virtual environment
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Generated FAISS vector store
+data/vector_store/
+
+# Git
+.git/
