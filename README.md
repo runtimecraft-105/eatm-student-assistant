@@ -1,3 +1,23 @@
+## 🛠️ Tech Stack
+
+<p align="left">
+  <img src="https://skillicons.dev/icons?i=python,flask,html,css,js,git,github,docker" />
+</p>
+
+### 🤖 AI / RAG
+
+- Google Gemini
+- Gemini Embeddings
+- FAISS Vector Database
+- Retrieval-Augmented Generation (RAG)
+
+### 🔧 Development
+
+- Python
+- Flask
+- REST API
+- Git & GitHub
+- Docker
 # EATM Student Assistant
 
 An AI-powered student assistant prototype for Einstein Academy of Technology and Management (EATM).
